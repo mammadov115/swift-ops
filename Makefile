@@ -6,6 +6,7 @@ DC        := docker compose -f docker/docker-compose.local.yml
 DC_CI     := $(DC) exec -T web
 MANAGE    := uv run --env-file .envs/.local/.env python manage.py 
 MANAGE_CI := $(DC_CI) python manage.py
+DAPHNE    := DJANGO_SETTINGS_MODULE=config.settings.local uv run --env-file .envs/.local/.env daphne
 
 # ==============================================================================
 # Help
@@ -29,7 +30,7 @@ docker-build: ## Build docker containers
 
 docker-up: ## Start docker containers (detached) and run server
 	$(DC) up -d
-	$(MANAGE) runserver --settings=config.settings.local
+	$(DAPHNE) -p 8000 config.asgi:application
 
 docker-down: ## Stop and remove docker containers
 	$(DC) down
