@@ -68,6 +68,19 @@ class OperatorAlertConsumer(AsyncWebsocketConsumer):
             )
         )
 
+    # Channels routes: "inactivity.alert.resolved" → inactivity_alert_resolved()
+    async def inactivity_alert_resolved(self, event):
+        """Forward an alert-resolved notification to the operator WebSocket client."""
+        await self.send(
+            text_data=json.dumps(
+                {
+                    "type": "alert_resolved",
+                    "vehicle_id": event["vehicle_id"],
+                    "resolved_at": event["resolved_at"],
+                }
+            )
+        )
+
 
 class VehicleLocationConsumer(AsyncWebsocketConsumer):
     """

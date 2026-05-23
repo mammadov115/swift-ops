@@ -193,6 +193,19 @@ def open_inactivity_alert(vehicle_id: str, vehicle_type: str) -> None:
     )
 
 
+def _broadcast_alert_resolved(vehicle_id: str, resolved_at: str) -> None:
+    """Push an alert-resolved notification to every connected operator."""
+    channel_layer = get_channel_layer()
+    async_to_sync(channel_layer.group_send)(
+        "operator_alerts",
+        {
+            "type": "inactivity.alert.resolved",
+            "vehicle_id": vehicle_id,
+            "resolved_at": resolved_at,
+        },
+    )
+
+
 def resolve_inactivity_alert(vehicle_id: str) -> None:
     """
     Close any open inactivity alert when the vehicle resumes movement.
@@ -212,3 +225,4 @@ def resolve_inactivity_alert(vehicle_id: str) -> None:
         vehicle_id=vehicle_id, closed_at__isnull=True
     ).update(closed_at=now)
     r.delete(_alert_flag_key(vehicle_id))
+    _broadcast_alert_resolved(vehicle_id, now.isoformat())
