@@ -7,6 +7,7 @@ DC_CI     := $(DC) exec -T web
 MANAGE    := uv run --env-file .envs/.local/.env python manage.py 
 MANAGE_CI := $(DC_CI) python manage.py
 DAPHNE    := DJANGO_SETTINGS_MODULE=config.settings.local uv run --env-file .envs/.local/.env daphne
+CELERY    := DJANGO_SETTINGS_MODULE=config.settings.local uv run --env-file .envs/.local/.env celery -A config
 
 # ==============================================================================
 # Help
@@ -92,6 +93,18 @@ django-initadmin: ## Create superuser with default credentials (local only)
 
 django-runserver: ## Run server
 	$(MANAGE) runserver
+
+# ==============================================================================
+# Celery
+# ==============================================================================
+
+.PHONY: celery-worker celery-beat
+
+celery-worker: ## Start Celery worker (local)
+	$(CELERY) worker -l info
+
+celery-beat: ## Start Celery beat scheduler (local)
+	$(CELERY) beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
 
 # ==============================================================================
 # Code Quality

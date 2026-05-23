@@ -131,7 +131,9 @@ def get_last_seen_timestamp(vehicle_id: str) -> "datetime | None":
 
 def get_inactivity_threshold(vehicle_type: str) -> int:
     """Return the inactivity threshold in minutes for the given vehicle type."""
-    thresholds: dict = settings.VEHICLE_INACTIVITY_THRESHOLDS
+    from .models import TrackingConfig  # noqa: PLC0415
+
+    thresholds = TrackingConfig.get_thresholds()
     return thresholds.get(vehicle_type, thresholds["default"])
 
 
