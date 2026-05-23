@@ -68,6 +68,7 @@ def store_location(vehicle_id: str, lat: str, lng: str, battery: int) -> dict:
         },
     )
 
+    resolve_inactivity_alert(vehicle_id)
     _broadcast_location(vehicle_id, payload)
     return payload
 
@@ -109,3 +110,76 @@ def validate_vehicle_exists(vehicle_id: str) -> Vehicle:
     Raises Http404 if not found.
     """
     return get_object_or_404(Vehicle, pk=vehicle_id, is_active=True)
+
+
+# ── Inactivity alert helpers ──────────────────────────────────────────────────
+
+def _alert_flag_key(vehicle_id: str) -> str:
+    return f"vehicle:{vehicle_id}:inactivity_alert"
+
+
+def get_last_seen_timestamp(vehicle_id: str) -> "datetime | None":
+    """
+    Return the last GPS timestamp for a vehicle from Redis, or None if the
+    vehicle has never reported a location.
+    """
+    raw = _get_redis().hget(_location_key(vehicle_id), "timestamp")
+    if raw is None:
+        return None
+    return datetime.fromisoformat(raw)
+
+
+def get_inactivity_threshold(vehicle_type: str) -> int:
+    """Return the inactivity threshold in minutes for the given vehicle type."""
+    thresholds: dict = settings.VEHICLE_INACTIVITY_THRESHOLDS
+    return thresholds.get(vehicle_type, thresholds["default"])
+
+
+def open_inactivity_alert(vehicle_id: str, vehicle_type: str) -> None:
+    """
+    Create an InactivityAlert if one is not already open for this vehicle.
+
+    A Redis flag (vehicle:{id}:inactivity_alert) is set to avoid a DB query
+    on every Beat run.  The flag is created here and deleted by
+    resolve_inactivity_alert() when movement resumes.
+    """
+    # Import here to avoid a circular import at module load time.
+    from .models import InactivityAlert  # noqa: PLC0415
+
+    r = _get_redis()
+    if r.exists(_alert_flag_key(vehicle_id)):
+        return  # Redis flag present — alert already open
+
+    # Guard against Redis eviction: double-check the DB.
+    if InactivityAlert.objects.filter(
+        vehicle_id=vehicle_id, closed_at__isnull=True
+    ).exists():
+        r.set(_alert_flag_key(vehicle_id), "1")  # re-sync the flag
+        return
+
+    threshold = get_inactivity_threshold(vehicle_type)
+    InactivityAlert.objects.create(
+        vehicle_id=vehicle_id, threshold_minutes=threshold
+    )
+    r.set(_alert_flag_key(vehicle_id), "1")
+
+
+def resolve_inactivity_alert(vehicle_id: str) -> None:
+    """
+    Close any open inactivity alert when the vehicle resumes movement.
+
+    Called automatically from store_location() on every GPS event so that
+    open alerts are resolved as soon as the vehicle is active again.
+    Skips the DB entirely when no Redis flag is present (fast path).
+    """
+    from .models import InactivityAlert  # noqa: PLC0415
+
+    r = _get_redis()
+    if not r.exists(_alert_flag_key(vehicle_id)):
+        return  # no open alert — nothing to do
+
+    now = datetime.now(tz=timezone.utc)
+    InactivityAlert.objects.filter(
+        vehicle_id=vehicle_id, closed_at__isnull=True
+    ).update(closed_at=now)
+    r.delete(_alert_flag_key(vehicle_id))

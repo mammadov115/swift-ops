@@ -43,3 +43,16 @@ CELERY_WORKER_SEND_TASK_EVENTS = True
 CELERY_TASK_SEND_SENT_EVENT = True
 # https://docs.celeryq.dev/en/stable/userguide/configuration.html#worker-hijack-root-logger
 CELERY_WORKER_HIJACK_ROOT_LOGGER = False
+
+# Beat schedule — bootstrapped into the DB by DatabaseScheduler on first run.
+# See: https://docs.celeryq.dev/en/stable/userguide/periodic-tasks.html
+from datetime import timedelta  # noqa: E402
+
+from .alerts import INACTIVITY_CHECK_INTERVAL_MINUTES  # noqa: E402
+
+CELERY_BEAT_SCHEDULE = {
+    "check-vehicle-inactivity": {
+        "task": "tracking.check_vehicle_inactivity",
+        "schedule": timedelta(minutes=INACTIVITY_CHECK_INTERVAL_MINUTES),
+    },
+}

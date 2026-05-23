@@ -20,3 +20,4 @@ from .migrations import *  # noqa
 from .urls import *  # noqa
 from .unfold import *  # noqa
 from .channels import *  # noqa
+from .alerts import *  # noqa
