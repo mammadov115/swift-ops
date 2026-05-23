@@ -34,3 +34,40 @@ class LoginSerializer(serializers.Serializer):
 class TokenResponseSerializer(serializers.Serializer):
     access = serializers.CharField(read_only=True)
     refresh = serializers.CharField(read_only=True)
+
+
+class TokenRefreshInputSerializer(serializers.Serializer):
+    refresh = serializers.CharField()
+
+
+class AccessTokenResponseSerializer(serializers.Serializer):
+    access = serializers.CharField(read_only=True)
+
+
+class EmailVerificationSerializer(serializers.Serializer):
+    token = serializers.UUIDField()
+
+
+class UserProfileSerializer(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True)
+    username = serializers.CharField(read_only=True)
+    email = serializers.EmailField(read_only=True)
+    first_name = serializers.CharField(read_only=True)
+    last_name = serializers.CharField(read_only=True)
+    role = serializers.CharField(read_only=True)
+    is_email_verified = serializers.BooleanField(read_only=True)
+    date_joined = serializers.DateTimeField(read_only=True)
+
+
+class UserProfileUpdateSerializer(serializers.Serializer):
+    first_name = serializers.CharField(max_length=150, required=False)
+    last_name = serializers.CharField(max_length=150, required=False)
+
+
+class PasswordResetRequestSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+
+class PasswordResetConfirmSerializer(serializers.Serializer):
+    token = serializers.UUIDField()
+    new_password = serializers.CharField(write_only=True, min_length=8)
