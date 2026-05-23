@@ -264,9 +264,9 @@ wscat --connect "$WS_BASE/ws/alerts/" --wait 3 2>&1 || \
 #
 # Step 2: trigger the inactivity check task in Terminal 2 (makes every vehicle
 #         that has gone silent past its threshold open an alert):
-#   uv run --env-file .envs/.local/.env \
-#     python manage.py shell --settings=config.settings.local -c \
-#     "from apps.tracking.tasks import check_vehicle_inactivity; print(check_vehicle_inactivity())"
+  uv run --env-file .envs/.local/.env \
+    python manage.py shell --settings=config.settings.local -c \
+    "from apps.tracking.tasks import check_vehicle_inactivity; print(check_vehicle_inactivity())"
 #
 # Expected: Terminal 1 immediately receives a message like:
 #   {
