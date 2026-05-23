@@ -524,6 +524,20 @@ wheels = [
 ]
 
 [[package]]
+name = "djangorestframework-gis"
+version = "1.2.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "django" },
+    { name = "django-filter" },
+    { name = "djangorestframework" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/01/cb/548d66f261c1bd94ccddafccf7db5a03e1db324075e4f1243b32185afe98/djangorestframework_gis-1.2.1.tar.gz", hash = "sha256:649ad0cb361dd85f2113b1796248eb2b198a01fa3d64c5e486106224c0ad51fd", size = 50304, upload-time = "2026-05-04T17:02:15.524Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/8e/db/ffb8914cd0ee6d63d3e3f0f4a8d9d07d8b945e2287d6048316a542dcb4e5/djangorestframework_gis-1.2.1-py2.py3-none-any.whl", hash = "sha256:73acb51918b18e484407c0fff61aca11a1f5a216fa694bc4c0c734b7097ecc77", size = 21901, upload-time = "2026-05-04T17:02:13.632Z" },
+]
+
+[[package]]
 name = "djangorestframework-simplejwt"
 version = "5.5.1"
 source = { registry = "https://pypi.org/simple" }
@@ -1013,6 +1027,7 @@ dependencies = [
     { name = "django-redis" },
     { name = "django-unfold" },
     { name = "djangorestframework" },
+    { name = "djangorestframework-gis" },
     { name = "djangorestframework-simplejwt" },
     { name = "drf-spectacular" },
     { name = "psycopg2-binary" },
@@ -1041,6 +1056,7 @@ requires-dist = [
     { name = "django-redis", specifier = ">=6.0.0" },
     { name = "django-unfold", specifier = "==0.92.0" },
     { name = "djangorestframework", specifier = "==3.17.1" },
+    { name = "djangorestframework-gis", specifier = ">=1.2.1" },
     { name = "djangorestframework-simplejwt", specifier = ">=5.5.1" },
     { name = "drf-spectacular", specifier = "==0.29.0" },
     { name = "psycopg2-binary", specifier = ">=2.9.12" },

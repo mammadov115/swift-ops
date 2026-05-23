@@ -109,6 +109,18 @@ UNFOLD = {
                     },
                 ],
             },
+            {
+                "title": _("Zones"),
+                "separator": True,
+                "collapsible": True,
+                "items": [
+                    {
+                        "title": _("Zones"),
+                        "icon": "map",
+                        "link": reverse_lazy("admin:zones_zone_changelist"),
+                    },
+                ],
+            },
         ],
     },
 }

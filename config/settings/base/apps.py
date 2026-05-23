@@ -14,12 +14,14 @@ DJANGO_APPS = [
     "django.contrib.staticfiles",
     # "django.contrib.humanize", # Handy template tags
     "django.contrib.admin",
+    "django.contrib.gis",
     "django.forms",
 ]
 THIRD_PARTY_APPS = [
     "channels",
     "rest_framework",
     "rest_framework_simplejwt",
+    "rest_framework_gis",
     "drf_spectacular",
     "django_filters",
     "django_extensions",
@@ -30,6 +32,7 @@ LOCAL_APPS = [
     "apps.accounts",
     "apps.vehicles",
     "apps.tracking",
+    "apps.zones",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
