@@ -88,8 +88,7 @@ django-seed: ## Seed database for local development
 	$(MANAGE) seed --users 50 --questions 50 --categories 5
 
 django-initadmin: ## Create superuser with default credentials (local only)
-	$(DAPHNE)
-		python manage.py createsuperuser --noinput --username admin
+	DJANGO_SUPERUSER_PASSWORD=admin $(MANAGE) createsuperuser --noinput --username admin2 --email admin2@example.com --settings=config.settings.local
 
 django-runserver: ## Run server
 	$(MANAGE) runserver
