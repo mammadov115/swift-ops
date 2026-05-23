@@ -31,6 +31,7 @@ urlpatterns = [
     ),
     # Your stuff: custom urls includes go here
     path("api/auth/", include("apps.accounts.urls")),
+    path("api/vehicles/", include("apps.vehicles.urls")),
     # Media files
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
 ]
