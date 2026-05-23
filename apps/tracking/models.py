@@ -106,7 +106,9 @@ class InactivityAlert(models.Model):
     closed_at = models.DateTimeField(_("closed at"), null=True, blank=True)
     threshold_minutes = models.PositiveSmallIntegerField(
         _("threshold (minutes)"),
-        help_text=_("Inactivity threshold (in minutes) that triggered this alert."),
+        help_text=_(
+            "Inactivity threshold (in minutes) that triggered this alert."
+        ),
     )
 
     class Meta:

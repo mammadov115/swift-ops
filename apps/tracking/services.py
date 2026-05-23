@@ -114,6 +114,7 @@ def validate_vehicle_exists(vehicle_id: str) -> Vehicle:
 
 # ── Inactivity alert helpers ──────────────────────────────────────────────────
 
+
 def _alert_flag_key(vehicle_id: str) -> str:
     return f"vehicle:{vehicle_id}:inactivity_alert"
 
@@ -135,6 +136,26 @@ def get_inactivity_threshold(vehicle_type: str) -> int:
 
     thresholds = TrackingConfig.get_thresholds()
     return thresholds.get(vehicle_type, thresholds["default"])
+
+
+def _broadcast_inactivity_alert(
+    vehicle_id: str,
+    vehicle_type: str,
+    threshold_minutes: int,
+    opened_at: str,
+) -> None:
+    """Push a new inactivity alert to every connected operator WebSocket client."""
+    channel_layer = get_channel_layer()
+    async_to_sync(channel_layer.group_send)(
+        "operator_alerts",
+        {
+            "type": "inactivity.alert",
+            "vehicle_id": vehicle_id,
+            "vehicle_type": vehicle_type,
+            "threshold_minutes": threshold_minutes,
+            "opened_at": opened_at,
+        },
+    )
 
 
 def open_inactivity_alert(vehicle_id: str, vehicle_type: str) -> None:
@@ -160,10 +181,16 @@ def open_inactivity_alert(vehicle_id: str, vehicle_type: str) -> None:
         return
 
     threshold = get_inactivity_threshold(vehicle_type)
-    InactivityAlert.objects.create(
+    alert = InactivityAlert.objects.create(
         vehicle_id=vehicle_id, threshold_minutes=threshold
     )
     r.set(_alert_flag_key(vehicle_id), "1")
+    _broadcast_inactivity_alert(
+        vehicle_id=vehicle_id,
+        vehicle_type=vehicle_type,
+        threshold_minutes=threshold,
+        opened_at=alert.opened_at.isoformat(),
+    )
 
 
 def resolve_inactivity_alert(vehicle_id: str) -> None:

@@ -31,7 +31,9 @@ def check_vehicle_inactivity() -> dict:
     alerted = 0
     skipped = 0
 
-    vehicles = Vehicle.objects.filter(is_active=True).only("id", "type").iterator()
+    vehicles = (
+        Vehicle.objects.filter(is_active=True).only("id", "type").iterator()
+    )
     for vehicle in vehicles:
         vehicle_id = str(vehicle.id)
         threshold = services.get_inactivity_threshold(vehicle.type)
