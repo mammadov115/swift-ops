@@ -12,7 +12,6 @@ WS    →  JWTAuthMiddlewareStack  →  URLRouter  →  Consumers
 
 import os
 
-from channels.auth import AuthMiddlewareStack
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.security.websocket import AllowedHostsOriginValidator
 from django.conf import settings
@@ -24,8 +23,9 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 django_asgi_app = get_asgi_application()
 
 from apps.tracking.routing import websocket_urlpatterns  # noqa: E402
+from config.ws_auth import JWTAuthMiddlewareStack  # noqa: E402
 
-_ws_app = AuthMiddlewareStack(URLRouter(websocket_urlpatterns))
+_ws_app = JWTAuthMiddlewareStack(URLRouter(websocket_urlpatterns))
 
 # AllowedHostsOriginValidator rejects CLI WebSocket clients (e.g. wscat) that
 # don't send an Origin header — skip it in development.

@@ -71,12 +71,41 @@ UNFOLD = {
                     {
                         "title": _("Users"),
                         "icon": "person",
-                        "link": reverse_lazy("admin:auth_user_changelist"),
+                        "link": reverse_lazy("admin:accounts_user_changelist"),
                     },
                     {
                         "title": _("Groups"),
                         "icon": "group",
                         "link": reverse_lazy("admin:auth_group_changelist"),
+                    },
+                ],
+            },
+            {
+                "title": _("Fleet"),
+                "separator": True,
+                "collapsible": True,
+                "items": [
+                    {
+                        "title": _("Vehicles"),
+                        "icon": "electric_scooter",
+                        "link": reverse_lazy("admin:vehicles_vehicle_changelist"),
+                    },
+                ],
+            },
+            {
+                "title": _("Tracking"),
+                "separator": True,
+                "collapsible": True,
+                "items": [
+                    {
+                        "title": _("Inactivity Alerts"),
+                        "icon": "notifications_active",
+                        "link": reverse_lazy("admin:tracking_inactivityalert_changelist"),
+                    },
+                    {
+                        "title": _("Tracking Config"),
+                        "icon": "tune",
+                        "link": reverse_lazy("admin:tracking_trackingconfig_changelist"),
                     },
                 ],
             },

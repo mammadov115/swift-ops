@@ -33,12 +33,14 @@ class OperatorAlertConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         user = self.scope.get("user")
         if not (user and user.is_authenticated):
+            await self.accept()
             await self.close(code=4001)
             return
 
         from apps.accounts.models import User  # noqa: PLC0415
 
         if user.role not in (User.Role.OPERATOR, User.Role.SUPERADMIN):
+            await self.accept()
             await self.close(code=4003)
             return
 

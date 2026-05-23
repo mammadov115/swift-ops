@@ -220,3 +220,85 @@ echo "               -H \"Authorization: Bearer \$OP_ACCESS\" \\"
 echo "               -d '{\"lat\": \"40.415\", \"lng\": \"49.875\", \"battery\": 65}'"
 echo ""
 echo "You should see a location_update message arrive in Terminal 1 immediately."
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 12. OPERATOR ALERT WEBSOCKET  –  authenticated operator connects to ws/alerts/
+#
+# Expected: connection accepted; client waits for inactivity_alert messages.
+# ─────────────────────────────────────────────────────────────────────────────
+echo ""
+echo "=== 12. Operator alert WebSocket – operator connects (expect accepted) ==="
+echo "Connecting to: $WS_BASE/ws/alerts/"
+wscat --connect "$WS_BASE/ws/alerts/?token=$OP_ACCESS" --wait 3 2>&1 || \
+  echo "wscat not installed – skipping (npm install -g wscat)"
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 13. OPERATOR ALERT WEBSOCKET  –  driver role is rejected
+#
+# Expected: connection closed immediately with code 4003.
+# ─────────────────────────────────────────────────────────────────────────────
+echo ""
+echo "=== 13. Operator alert WebSocket – driver role → 4003 ==="
+wscat --connect "$WS_BASE/ws/alerts/?token=$DRIVER_ACCESS" --wait 3 2>&1 || \
+  echo "wscat not installed – skipping"
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 14. OPERATOR ALERT WEBSOCKET  –  unauthenticated connection is rejected
+#
+# Expected: connection closed immediately with code 4001.
+# ─────────────────────────────────────────────────────────────────────────────
+echo ""
+echo "=== 14. Operator alert WebSocket – no token → 4001 ==="
+wscat --connect "$WS_BASE/ws/alerts/" --wait 3 2>&1 || \
+  echo "wscat not installed – skipping"
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 15. INACTIVITY ALERT – end-to-end push test (manual two-terminal flow)
+#
+# Step 1: open the operator alert WebSocket in Terminal 1:
+#   wscat --connect "ws://localhost:8000/ws/alerts/?token=<OP_ACCESS>"
+#
+# Step 2: trigger the inactivity check task in Terminal 2 (makes every vehicle
+#         that has gone silent past its threshold open an alert):
+#   uv run --env-file .envs/.local/.env \
+#     python manage.py shell --settings=config.settings.local -c \
+#     "from apps.tracking.tasks import check_vehicle_inactivity; print(check_vehicle_inactivity())"
+#
+# Expected: Terminal 1 immediately receives a message like:
+#   {
+#     "type": "inactivity_alert",
+#     "vehicle_id": "<uuid>",
+#     "vehicle_type": "scooter",
+#     "threshold_minutes": 15,
+#     "opened_at": "2026-05-23T10:00:00+00:00"
+#   }
+#
+# Note: an alert is only fired once per vehicle until the vehicle sends a new
+#       GPS event (which resolves the alert and clears the Redis flag).
+# ─────────────────────────────────────────────────────────────────────────────
+echo ""
+echo "=== 15. Inactivity alert – manual instructions ==="
+echo ""
+echo "Terminal 1 (listen for alerts):"
+echo "  wscat --connect \"$WS_BASE/ws/alerts/?token=\$OP_ACCESS\""
+echo ""
+echo "Terminal 2 (trigger inactivity check):"
+echo "  uv run --env-file .envs/.local/.env \\"
+echo "    python manage.py shell --settings=config.settings.local -c \\"
+echo "    \"from apps.tracking.tasks import check_vehicle_inactivity; print(check_vehicle_inactivity())\""
+echo ""
+echo "You should see an inactivity_alert JSON message arrive in Terminal 1."
+echo ""
+echo "To resolve the alert (simulate the vehicle coming back online):"
+echo "  curl -s -X POST $BASE/api/tracking/vehicles/\$VEHICLE_ID/location/ \\"
+echo "    -H 'Content-Type: application/json' \\"
+echo "    -H \"Authorization: Bearer \$OP_ACCESS\" \\"
+echo "    -d '{\"lat\": \"40.412\", \"lng\": \"49.871\", \"battery\": 60}' | jq"
+echo ""
+echo "After that GPS ping the alert is closed in the DB and the Redis flag is"
+echo "cleared, so the next inactivity check will fire a fresh alert if the"
+echo "vehicle goes silent again."
