@@ -204,11 +204,11 @@ wscat --connect "$WS_BASE/ws/vehicles/$VEHICLE_ID/" --wait 3 2>&1 || \
 #   wscat --connect ws://localhost:8000/ws/vehicles/<VEHICLE_ID>/
 #
 # In a second terminal run (after substituting the vehicle UUID):
-#   curl -s -X POST http://localhost:8000/api/tracking/vehicles/<VEHICLE_ID>/location/ \
-#     -H "Content-Type: application/json" \
-#     -H "Authorization: Bearer <OP_ACCESS>" \
-#     -d '{"lat": "40.415", "lng": "49.875", "battery": 65}'
-#
+  curl -s -X POST http://localhost:8000/api/tracking/vehicles/<VEHICLE_ID>/location/ \
+    -H "Content-Type: application/json" \
+    -H "Authorization: Bearer <OP_ACCESS>" \
+    -d '{"lat": "40.415", "lng": "49.875", "battery": 65}'
+
 # Expected: the first terminal immediately receives a location_update message.
 # ─────────────────────────────────────────────────────────────────────────────
 echo ""

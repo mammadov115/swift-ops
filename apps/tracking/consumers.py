@@ -26,24 +26,30 @@ class VehicleLocationConsumer(AsyncWebsocketConsumer):
         self.vehicle_id = self.scope["url_route"]["kwargs"]["vehicle_id"]
         self.group_name = f"vehicle_{self.vehicle_id}"
 
-        await self.channel_layer.group_add(
-            self.group_name, self.channel_name
-        )
+        await self.channel_layer.group_add(self.group_name, self.channel_name)
         await self.accept()
 
         # Send the last-known location so the client is immediately up-to-date.
         location = await sync_to_async(get_location)(self.vehicle_id)
         if location:
-            await self.send(text_data=json.dumps({
-                "type": "location_update",
-                **location,
-            }))
+            await self.send(
+                text_data=json.dumps(
+                    {
+                        "type": "location_update",
+                        **location,
+                    }
+                )
+            )
         else:
-            await self.send(text_data=json.dumps({
-                "type": "connected",
-                "vehicle_id": self.vehicle_id,
-                "message": "No location data yet. Waiting for GPS events.",
-            }))
+            await self.send(
+                text_data=json.dumps(
+                    {
+                        "type": "connected",
+                        "vehicle_id": self.vehicle_id,
+                        "message": "No location data yet. Waiting for GPS events.",
+                    }
+                )
+            )
 
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(
@@ -53,11 +59,15 @@ class VehicleLocationConsumer(AsyncWebsocketConsumer):
     # Channels routes messages by type:  "location.update" → location_update()
     async def location_update(self, event):
         """Forward a channel layer group message to the WebSocket client."""
-        await self.send(text_data=json.dumps({
-            "type": "location_update",
-            "vehicle_id": event["vehicle_id"],
-            "lat": event["lat"],
-            "lng": event["lng"],
-            "battery": event["battery"],
-            "timestamp": event["timestamp"],
-        }))
+        await self.send(
+            text_data=json.dumps(
+                {
+                    "type": "location_update",
+                    "vehicle_id": event["vehicle_id"],
+                    "lat": event["lat"],
+                    "lng": event["lng"],
+                    "battery": event["battery"],
+                    "timestamp": event["timestamp"],
+                }
+            )
+        )

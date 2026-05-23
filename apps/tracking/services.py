@@ -58,12 +58,15 @@ def store_location(vehicle_id: str, lat: str, lng: str, battery: int) -> dict:
     }
 
     r = _get_redis()
-    r.hset(_location_key(vehicle_id), mapping={
-        "lat": payload["lat"],
-        "lng": payload["lng"],
-        "battery": str(battery),
-        "timestamp": timestamp,
-    })
+    r.hset(
+        _location_key(vehicle_id),
+        mapping={
+            "lat": payload["lat"],
+            "lng": payload["lng"],
+            "battery": str(battery),
+            "timestamp": timestamp,
+        },
+    )
 
     _broadcast_location(vehicle_id, payload)
     return payload
@@ -94,7 +97,7 @@ def _broadcast_location(vehicle_id: str, payload: dict) -> None:
     async_to_sync(channel_layer.group_send)(
         group_name,
         {
-            "type": "location.update",   # maps to consumer method location_update
+            "type": "location.update",  # maps to consumer method location_update
             **payload,
         },
     )
