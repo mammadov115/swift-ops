@@ -1,0 +1,50 @@
+[project]
+name = "swift-ops"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "argon2-cffi>=25.1.0",
+    "django==5.2",
+    "django-debug-toolbar>=6.3.0",
+    "django-environ>=0.13.0",
+    "django-extensions>=4.1",
+    "django-redis>=6.0.0",
+    "django-unfold==0.92.0",
+    "djangorestframework==3.17.1",
+    "djangorestframework-simplejwt>=5.5.1",
+    "drf-spectacular==0.29.0",
+    "psycopg2-binary>=2.9.12",
+    "whitenoise>=6.12.0",
+]
+
+[dependency-groups]
+dev = [
+    "bandit[toml]>=1.9.4",
+    "nplusone>=1.0.0",
+    "ruff>=0.15.14",
+]
+
+[tool.bandit]
+exclude_dirs = [".venv", "migrations", "tests"]
+skips = ["B101"]  # assert statements are acceptable outside test code
+
+[tool.ruff]
+line-length = 79
+target-version = "py314"
+exclude = ["migrations"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W"]
+ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+"config/settings/*.py" = ["F405", "F403"]
+"apps/chat/services.py" = ["F821"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["apps", "config"]
+
+[tool.ruff.format]
+line-ending = "auto"
