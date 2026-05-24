@@ -1,6 +1,6 @@
 from drf_spectacular.utils import OpenApiResponse, extend_schema
 
-from .serializers import GPSEventSerializer, VehicleLocationSerializer
+from .serializers import GPSEventSerializer, LiveMapItemSerializer, VehicleLocationSerializer
 
 gps_event_schema = extend_schema(
     summary="Ingest a GPS event",
@@ -30,5 +30,17 @@ vehicle_location_schema = extend_schema(
         200: VehicleLocationSerializer,
         404: OpenApiResponse(description="No location data yet"),
     },
+    tags=["Tracking"],
+)
+
+live_map_schema = extend_schema(
+    summary="Live map — all vehicle coordinates",
+    description=(
+        "Returns the last-known GPS position and battery level for every "
+        "active vehicle, read directly from Redis. Vehicles with no location "
+        "data recorded yet are omitted. "
+        "Requires operator or superadmin role."
+    ),
+    responses={200: LiveMapItemSerializer(many=True)},
     tags=["Tracking"],
 )

@@ -1,6 +1,8 @@
 from django.contrib.auth import get_user_model
+from django.db.models import Q
 from rest_framework import status
 from rest_framework.generics import get_object_or_404
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
@@ -21,6 +23,7 @@ from .schema import (
     token_refresh_schema,
     user_activate_schema,
     user_block_schema,
+    user_list_schema,
 )
 from .serializers import (
     EmailVerificationSerializer,
@@ -30,11 +33,18 @@ from .serializers import (
     PasswordResetRequestSerializer,
     RegisterSerializer,
     TokenRefreshInputSerializer,
+    UserListSerializer,
     UserProfileSerializer,
     UserProfileUpdateSerializer,
 )
 
 User = get_user_model()
+
+
+class UserListPagination(PageNumberPagination):
+    page_size = 20
+    page_size_query_param = "page_size"
+    max_page_size = 100
 
 
 class AuthViewSet(ViewSet):
@@ -171,3 +181,30 @@ class UserViewSet(ViewSet):
         serializer.is_valid(raise_exception=True)
         services.save_fcm_token(request.user, serializer.validated_data["fcm_token"])
         return Response({"detail": "FCM token saved."}, status=status.HTTP_200_OK)
+
+    @user_list_schema
+    def list_users(self, request):
+        qs = User.objects.all()
+        role = request.query_params.get("role")
+        is_active_param = request.query_params.get("is_active")
+        search = request.query_params.get("search")
+
+        if role:
+            qs = qs.filter(role=role)
+        if is_active_param is not None:
+            qs = qs.filter(is_active=is_active_param.lower() in ("true", "1", "yes"))
+        if search:
+            qs = qs.filter(
+                Q(username__icontains=search)
+                | Q(email__icontains=search)
+                | Q(first_name__icontains=search)
+                | Q(last_name__icontains=search)
+            )
+
+        paginator = UserListPagination()
+        page = paginator.paginate_queryset(qs.order_by("-date_joined"), request)
+        if page is not None:
+            return paginator.get_paginated_response(
+                UserListSerializer(page, many=True).data
+            )
+        return Response(UserListSerializer(qs, many=True).data)

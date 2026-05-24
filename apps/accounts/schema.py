@@ -1,4 +1,4 @@
-from drf_spectacular.utils import OpenApiResponse, extend_schema
+from drf_spectacular.utils import OpenApiParameter, OpenApiResponse, extend_schema
 
 from .serializers import (
     AccessTokenResponseSerializer,
@@ -10,6 +10,7 @@ from .serializers import (
     RegisterSerializer,
     TokenRefreshInputSerializer,
     TokenResponseSerializer,
+    UserListSerializer,
     UserProfileSerializer,
     UserProfileUpdateSerializer,
 )
@@ -173,4 +174,21 @@ fcm_token_schema = extend_schema(
         400: OpenApiResponse(description="Validation error."),
     },
     tags=["Profile"],
+)
+
+user_list_schema = extend_schema(
+    summary="List users",
+    description=(
+        "Returns a paginated list of all users. "
+        "Supports filtering by role, active status, and free-text search "
+        "across username, email, first name, and last name. "
+        "Requires operator or superadmin role."
+    ),
+    parameters=[
+        OpenApiParameter(name="role", description="Filter by role (driver/operator/superadmin)", required=False, type=str),
+        OpenApiParameter(name="is_active", description="Filter by active status (true/false)", required=False, type=bool),
+        OpenApiParameter(name="search", description="Search by username, email, first name, or last name", required=False, type=str),
+    ],
+    responses={200: UserListSerializer(many=True)},
+    tags=["User Management"],
 )

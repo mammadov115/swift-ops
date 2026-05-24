@@ -56,4 +56,10 @@ urlpatterns = [
         UserViewSet.as_view({"post": "update_fcm_token"}),
         name="fcm-token",
     ),
+    # Admin: user listing with filters
+    path(
+        "users/",
+        UserViewSet.as_view({"get": "list_users"}),
+        name="user-list",
+    ),
 ]

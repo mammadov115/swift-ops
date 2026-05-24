@@ -62,4 +62,12 @@ CELERY_BEAT_SCHEDULE = {
         "task": "notifications.cleanup_old_notifications",
         "schedule": timedelta(days=1),
     },
+    "compute-daily-report": {
+        "task": "reports.compute_daily_report",
+        "schedule": timedelta(days=1),
+    },
+    "compute-zone-activity": {
+        "task": "reports.compute_zone_activity",
+        "schedule": timedelta(days=1),
+    },
 }

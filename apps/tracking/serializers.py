@@ -27,3 +27,13 @@ class VehicleLocationSerializer(serializers.Serializer):
     lng = serializers.CharField()
     battery = serializers.IntegerField()
     timestamp = serializers.CharField()
+
+
+class LiveMapItemSerializer(serializers.Serializer):
+    """One entry in the live-map snapshot: vehicle id + latest Redis location."""
+
+    vehicle_id = serializers.UUIDField()
+    lat = serializers.CharField()
+    lng = serializers.CharField()
+    battery = serializers.IntegerField()
+    timestamp = serializers.CharField()

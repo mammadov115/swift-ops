@@ -4,9 +4,11 @@ from rest_framework.viewsets import ViewSet
 
 from apps.accounts.permissions import IsOperatorOrSuperAdmin
 
+from apps.vehicles.models import Vehicle
+
 from . import services
-from .schemas import gps_event_schema, vehicle_location_schema
-from .serializers import GPSEventSerializer, VehicleLocationSerializer
+from .schemas import gps_event_schema, live_map_schema, vehicle_location_schema
+from .serializers import GPSEventSerializer, LiveMapItemSerializer, VehicleLocationSerializer
 
 
 class TrackingViewSet(ViewSet):
@@ -18,9 +20,9 @@ class TrackingViewSet(ViewSet):
     """
 
     def get_permissions(self):
-        # Only operators/superadmins may push GPS data.
-        # Any authenticated user may read the last known location.
-        if self.action == "ingest":
+        # Only operators/superadmins may push GPS data or view the live map.
+        # Any authenticated user may read a single vehicle's last known location.
+        if self.action in {"ingest", "live_map"}:
             return [IsOperatorOrSuperAdmin()]
         return [IsAuthenticated()]
 
@@ -50,3 +52,16 @@ class TrackingViewSet(ViewSet):
                 status=404,
             )
         return Response(VehicleLocationSerializer(location).data)
+
+    @live_map_schema
+    def live_map(self, request):
+        """Return live coordinates for all active vehicles, read from Redis."""
+        vehicle_ids = Vehicle.objects.filter(is_active=True).values_list(
+            "id", flat=True
+        )
+        locations = [
+            loc
+            for vid in vehicle_ids
+            if (loc := services.get_location(str(vid))) is not None
+        ]
+        return Response(LiveMapItemSerializer(locations, many=True).data)

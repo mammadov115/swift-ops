@@ -68,6 +68,23 @@ class UserProfileUpdateSerializer(serializers.Serializer):
     last_name = serializers.CharField(max_length=150, required=False)
 
 
+class UserListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            "id",
+            "username",
+            "email",
+            "first_name",
+            "last_name",
+            "role",
+            "is_active",
+            "is_email_verified",
+            "date_joined",
+        ]
+        read_only_fields = fields
+
+
 class PasswordResetRequestSerializer(serializers.Serializer):
     email = serializers.EmailField()
 
