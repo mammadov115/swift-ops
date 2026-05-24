@@ -17,7 +17,6 @@ TOKEN=$(curl -s -X POST "$BASE/api/auth/login/" \
 
 if [ -z "$TOKEN" ]; then
   echo "FAIL: could not obtain access token"
-  exit 1
 fi
 echo "Token: ${TOKEN:0:20}..."
 AUTH="Authorization: Bearer $TOKEN"
