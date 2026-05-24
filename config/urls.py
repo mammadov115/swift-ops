@@ -34,6 +34,7 @@ urlpatterns = [
     path("api/vehicles/", include("apps.vehicles.urls")),
     path("api/tracking/vehicles/", include("apps.tracking.urls")),
     path("api/zones/", include("apps.zones.urls")),
+    path("api/rides/", include("apps.rides.urls")),
     # Media files
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
 ]
