@@ -52,12 +52,13 @@ def start_ride(
         except DjangoValidationError as exc:
             raise serializers.ValidationError({"vehicle": exc.message})
 
-        return Ride.objects.create(
+        ride = Ride.objects.create(
             driver=driver,
             vehicle=vehicle,
             start_latitude=start_lat,
             start_longitude=start_lng,
         )
+        return Ride.objects.select_related("vehicle", "driver").get(pk=ride.pk)
 
 
 def end_ride(ride: Ride, end_lat: Decimal, end_lng: Decimal) -> Ride:
@@ -115,13 +116,13 @@ def end_ride(ride: Ride, end_lat: Decimal, end_lng: Decimal) -> Ride:
         except DjangoValidationError as exc:
             raise serializers.ValidationError({"vehicle": exc.message})
 
-    return ride
+    return Ride.objects.select_related("vehicle", "driver").get(pk=ride.pk)
 
 
 def get_active_ride(driver) -> Ride:
     """Return the driver's current active ride or raise 404."""
     return get_object_or_404(
-        Ride.objects.select_related("vehicle"),
+        Ride.objects.select_related("vehicle", "driver"),
         driver=driver,
         status=Ride.Status.ACTIVE,
     )
@@ -141,4 +142,4 @@ def list_ride_history(driver):
     return Ride.objects.filter(
         driver=driver,
         status__in=[Ride.Status.COMPLETED, Ride.Status.CANCELLED],
-    ).select_related("vehicle")
+    ).select_related("vehicle", "driver")

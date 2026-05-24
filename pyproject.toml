@@ -29,7 +29,6 @@ dependencies = [
 [dependency-groups]
 dev = [
     "bandit[toml]>=1.9.4",
-    "nplusone>=1.0.0",
     "ruff>=0.15.14",
 ]
 

@@ -24,10 +24,6 @@ CSRF_TRUSTED_ORIGINS = env.list(
     ],
 )
 
-# nplusone — detect N+1 queries at runtime in local development
-MIDDLEWARE += ["nplusone.ext.django.NPlusOneMiddleware"]
-NPLUSONE_RAISE = True
-
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
