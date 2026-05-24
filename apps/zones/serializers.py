@@ -28,5 +28,5 @@ class ZoneUpdateSerializer(GeoFeatureModelSerializer):
         extra_kwargs = {
             "name": {"required": False},
             "zone_type": {"required": False},
-            "geometry": {"required": False},
+            "geometry": {"required": False, "allow_null": True},
         }

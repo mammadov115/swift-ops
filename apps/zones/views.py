@@ -48,7 +48,8 @@ class ZoneViewSet(ViewSet):
         zone = services.get_active_zone(pk)
         serializer = ZoneUpdateSerializer(zone, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
-        zone = services.update_zone(zone, serializer.validated_data)
+        data = {k: v for k, v in serializer.validated_data.items() if v is not None}
+        zone = services.update_zone(zone, data)
         return Response(ZoneSerializer(zone).data)
 
     @zone_destroy_schema

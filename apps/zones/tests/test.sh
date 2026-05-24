@@ -217,8 +217,8 @@ curl -s -o /dev/null -w "%{http_code}\n" \
 # 11. DEACTIVATED ZONE NO LONGER APPEARS IN LIST
 # Expected: 200  —  FeatureCollection does NOT include $THIRD_ID
 # ─────────────────────────────────────────────────────────────────────────────
-curl -s $BASE/api/zones/ \
-  -H "Authorization: Bearer $OP_ACCESS" | jq '[.features[].properties.id]'
+  curl -s $BASE/api/zones/ \
+    -H "Authorization: Bearer $OP_ACCESS" | jq '[.features[].id]'
 
 
 # ─────────────────────────────────────────────────────────────────────────────
