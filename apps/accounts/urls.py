@@ -51,4 +51,9 @@ urlpatterns = [
         UserViewSet.as_view({"post": "activate"}),
         name="user-activate",
     ),
+    path(
+        "profile/fcm-token/",
+        UserViewSet.as_view({"post": "update_fcm_token"}),
+        name="fcm-token",
+    ),
 ]
