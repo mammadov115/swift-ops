@@ -59,6 +59,10 @@ class UserProfileSerializer(serializers.Serializer):
     date_joined = serializers.DateTimeField(read_only=True)
 
 
+class FCMTokenSerializer(serializers.Serializer):
+    fcm_token = serializers.CharField(max_length=255)
+
+
 class UserProfileUpdateSerializer(serializers.Serializer):
     first_name = serializers.CharField(max_length=150, required=False)
     last_name = serializers.CharField(max_length=150, required=False)

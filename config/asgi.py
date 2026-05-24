@@ -22,9 +22,11 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 # Must be called before any models are imported.
 django_asgi_app = get_asgi_application()
 
-from apps.tracking.routing import websocket_urlpatterns  # noqa: E402
+from apps.notifications.routing import websocket_urlpatterns as notifications_ws  # noqa: E402
+from apps.tracking.routing import websocket_urlpatterns as tracking_ws  # noqa: E402
 from config.ws_auth import JWTAuthMiddlewareStack  # noqa: E402
 
+websocket_urlpatterns = tracking_ws + notifications_ws
 _ws_app = JWTAuthMiddlewareStack(URLRouter(websocket_urlpatterns))
 
 # AllowedHostsOriginValidator rejects CLI WebSocket clients (e.g. wscat) that

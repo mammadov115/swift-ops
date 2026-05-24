@@ -23,6 +23,13 @@ class User(AbstractUser):
         default=Role.DRIVER,
     )
     is_email_verified = models.BooleanField(_("email verified"), default=False)
+    fcm_token = models.CharField(
+        _("FCM token"),
+        max_length=255,
+        blank=True,
+        default="",
+        help_text=_("Firebase Cloud Messaging device token for push notifications."),
+    )
 
     REQUIRED_FIELDS = ["email"]
 

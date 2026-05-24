@@ -36,6 +36,7 @@ urlpatterns = [
     path("api/zones/", include("apps.zones.urls")),
     path("api/rides/", include("apps.rides.urls")),
     path("api/payments/", include("apps.payments.urls")),
+    path("api/notifications/", include("apps.notifications.urls")),
     # Media files
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
 ]

@@ -3,6 +3,7 @@ from drf_spectacular.utils import OpenApiResponse, extend_schema
 from .serializers import (
     AccessTokenResponseSerializer,
     EmailVerificationSerializer,
+    FCMTokenSerializer,
     LoginSerializer,
     PasswordResetConfirmSerializer,
     PasswordResetRequestSerializer,
@@ -157,4 +158,19 @@ password_reset_confirm_schema = extend_schema(
         ),
     },
     tags=["Authentication"],
+)
+
+fcm_token_schema = extend_schema(
+    summary="Register FCM device token",
+    description=(
+        "Saves a Firebase Cloud Messaging token for the authenticated user. "
+        "Call this endpoint after obtaining a token from the Firebase SDK on "
+        "the device. The token is used to deliver push notifications."
+    ),
+    request=FCMTokenSerializer,
+    responses={
+        200: OpenApiResponse(description="FCM token saved."),
+        400: OpenApiResponse(description="Validation error."),
+    },
+    tags=["Profile"],
 )

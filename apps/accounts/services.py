@@ -149,3 +149,9 @@ def confirm_password_reset(token_value: str, new_password: str) -> None:
     user.save(update_fields=["password"])
     token.is_used = True
     token.save(update_fields=["is_used"])
+
+
+def save_fcm_token(user, token: str) -> None:
+    """Persist the FCM device token for push notification delivery."""
+    user.fcm_token = token
+    user.save(update_fields=["fcm_token"])

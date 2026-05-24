@@ -54,4 +54,12 @@ CELERY_BEAT_SCHEDULE = {
         "task": "tracking.check_vehicle_inactivity",
         "schedule": timedelta(minutes=5),
     },
+    "check-battery-levels": {
+        "task": "notifications.check_battery_levels",
+        "schedule": timedelta(minutes=5),
+    },
+    "cleanup-old-notifications": {
+        "task": "notifications.cleanup_old_notifications",
+        "schedule": timedelta(days=1),
+    },
 }

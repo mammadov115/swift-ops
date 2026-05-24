@@ -21,6 +21,7 @@ dependencies = [
     "djangorestframework-gis>=1.2.1",
     "djangorestframework-simplejwt>=5.5.1",
     "drf-spectacular==0.29.0",
+    "firebase-admin>=7.4.0",
     "geopy>=2.4.1",
     "psycopg2-binary>=2.9.12",
     "stripe>=15.1.0",

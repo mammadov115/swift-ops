@@ -21,3 +21,4 @@ from .urls import *  # noqa
 from .unfold import *  # noqa
 from .channels import *  # noqa
 from .payments import *  # noqa
+from .notifications import *  # noqa

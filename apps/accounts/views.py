@@ -11,6 +11,7 @@ from . import services
 from .permissions import IsOperatorOrSuperAdmin
 from .schema import (
     email_verification_schema,
+    fcm_token_schema,
     login_schema,
     password_reset_confirm_schema,
     password_reset_request_schema,
@@ -23,6 +24,7 @@ from .schema import (
 )
 from .serializers import (
     EmailVerificationSerializer,
+    FCMTokenSerializer,
     LoginSerializer,
     PasswordResetConfirmSerializer,
     PasswordResetRequestSerializer,
@@ -123,7 +125,7 @@ class AuthViewSet(ViewSet):
 class UserViewSet(ViewSet):
     """Handles user profile retrieval/update and operator-level user management."""
 
-    _PROFILE_ACTIONS = frozenset({"retrieve_profile", "update_profile"})
+    _PROFILE_ACTIONS = frozenset({"retrieve_profile", "update_profile", "update_fcm_token"})
 
     def get_permissions(self):
         if self.action in self._PROFILE_ACTIONS:
@@ -162,3 +164,10 @@ class UserViewSet(ViewSet):
             {"detail": "User has been activated."},
             status=status.HTTP_200_OK,
         )
+
+    @fcm_token_schema
+    def update_fcm_token(self, request):
+        serializer = FCMTokenSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        services.save_fcm_token(request.user, serializer.validated_data["fcm_token"])
+        return Response({"detail": "FCM token saved."}, status=status.HTTP_200_OK)

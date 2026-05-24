@@ -73,6 +73,16 @@ def store_location(vehicle_id: str, lat: str, lng: str, battery: int) -> dict:
     return payload
 
 
+def get_battery_level(vehicle_id: str) -> int | None:
+    """
+    Return the last-known battery level (0-100) for a vehicle, or None if
+    no location data has been recorded yet.
+    """
+    r = _get_redis()
+    raw = r.hget(_location_key(vehicle_id), "battery")
+    return int(raw) if raw is not None else None
+
+
 def get_location(vehicle_id: str) -> dict | None:
     """
     Read the latest stored location for a vehicle from Redis.
