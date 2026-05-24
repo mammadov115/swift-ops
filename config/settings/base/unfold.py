@@ -93,6 +93,52 @@ UNFOLD = {
                 ],
             },
             {
+                "title": _("Rides"),
+                "separator": True,
+                "collapsible": True,
+                "items": [
+                    {
+                        "title": _("Rides"),
+                        "icon": "route",
+                        "link": reverse_lazy("admin:rides_ride_changelist"),
+                    },
+                ],
+            },
+            {
+                "title": _("Payments"),
+                "separator": True,
+                "collapsible": True,
+                "items": [
+                    {
+                        "title": _("Payments"),
+                        "icon": "payments",
+                        "link": reverse_lazy("admin:payments_payment_changelist"),
+                    },
+                    {
+                        "title": _("Payment Methods"),
+                        "icon": "credit_card",
+                        "link": reverse_lazy("admin:payments_paymentmethod_changelist"),
+                    },
+                    {
+                        "title": _("Promo Codes"),
+                        "icon": "local_offer",
+                        "link": reverse_lazy("admin:payments_promocode_changelist"),
+                    },
+                ],
+            },
+            {
+                "title": _("Notifications"),
+                "separator": True,
+                "collapsible": True,
+                "items": [
+                    {
+                        "title": _("Notifications"),
+                        "icon": "notifications",
+                        "link": reverse_lazy("admin:notifications_notification_changelist"),
+                    },
+                ],
+            },
+            {
                 "title": _("Tracking"),
                 "separator": True,
                 "collapsible": True,
@@ -118,6 +164,45 @@ UNFOLD = {
                         "title": _("Zones"),
                         "icon": "map",
                         "link": reverse_lazy("admin:zones_zone_changelist"),
+                    },
+                ],
+            },
+            {
+                "title": _("Reports"),
+                "separator": True,
+                "collapsible": True,
+                "items": [
+                    {
+                        "title": _("Daily Reports"),
+                        "icon": "bar_chart",
+                        "link": reverse_lazy("admin:reports_dailyreport_changelist"),
+                    },
+                    {
+                        "title": _("Zone Activity"),
+                        "icon": "area_chart",
+                        "link": reverse_lazy("admin:reports_zoneactivityreport_changelist"),
+                    },
+                ],
+            },
+            {
+                "title": _("Scheduler"),
+                "separator": True,
+                "collapsible": True,
+                "items": [
+                    {
+                        "title": _("Periodic Tasks"),
+                        "icon": "schedule",
+                        "link": reverse_lazy("admin:django_celery_beat_periodictask_changelist"),
+                    },
+                    {
+                        "title": _("Crontab Schedules"),
+                        "icon": "event_repeat",
+                        "link": reverse_lazy("admin:django_celery_beat_crontabschedule_changelist"),
+                    },
+                    {
+                        "title": _("Interval Schedules"),
+                        "icon": "timer",
+                        "link": reverse_lazy("admin:django_celery_beat_intervalschedule_changelist"),
                     },
                 ],
             },
