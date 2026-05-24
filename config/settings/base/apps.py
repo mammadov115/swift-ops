@@ -34,6 +34,7 @@ LOCAL_APPS = [
     "apps.tracking",
     "apps.zones",
     "apps.rides",
+    "apps.payments",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
