@@ -1,5 +1,5 @@
 from .base import *  # noqa
-from .base import env
+from .base import LOGGING, env
 
 DEBUG = False
 SECRET_KEY = env("DJANGO_SECRET_KEY")
@@ -33,3 +33,7 @@ CACHES = {
         },
     }
 }
+
+# In production, switch to JSON formatter so logs are machine-readable
+# by Grafana / Kibana / CloudWatch.
+LOGGING["handlers"]["console"]["formatter"] = "json"  # type: ignore[index]

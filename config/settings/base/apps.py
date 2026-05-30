@@ -26,6 +26,7 @@ THIRD_PARTY_APPS = [
     "django_filters",
     "django_extensions",
     "django_celery_beat",
+    "django_structlog",
 ]
 
 LOCAL_APPS = [

@@ -5,6 +5,7 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.viewsets import ViewSet
 from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -51,6 +52,9 @@ class AuthViewSet(ViewSet):
     """Handles all stateless authentication flows."""
 
     permission_classes = [AllowAny]
+    # Stricter rate limit for auth endpoints — brute-force protection.
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "auth"
 
     @register_schema
     def register(self, request):
